@@ -3,4 +3,4 @@ project(projects)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(projects main.cpp BHeap.h BinomHeap.h)
+add_executable(projects main.cpp BHeap.h BinomHeap.h LeftistHeap.h SkewHeap.h)

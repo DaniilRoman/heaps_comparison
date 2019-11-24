@@ -33,12 +33,16 @@ public:
     }
 
     void merge(BinomHeapNode* node) {
+        rightSibling = nullptr;
+        node->rightSibling = nullptr;
+
         if ( rightChild ) {
             rightChild->rightSibling = node;
+            if ( !leftChild ) {
+                leftChild = rightChild;
+            }
         }
-        if ( !leftChild ) {
-            leftChild = rightChild;
-        }
+
         rightChild = node;
         node->parent = this;
         this->degree++;
@@ -63,37 +67,57 @@ public:
         std::cout << std::endl << "++++++++++++++++++++++++" << std::endl << "++++++++++++++++++++++++" << std::endl;
         BinomHeapNode* currentBrother = this;
         while(currentBrother) {
-            BinomHeapNode* currentTree = currentBrother->leftChild;
-
-            std::cout << "|" << currentBrother->key  << "|";
-            if ( !currentBrother->leftChild && currentBrother->rightChild ) {
-                std::cout << std::endl << "------ |" << currentBrother->rightChild->key << "|";
-
-                std::cout << std::endl << "---------------------------------" << std::endl;
-                currentBrother = currentBrother->rightSibling;
-                continue;
-            }
-            while ( currentTree ) {
-                BinomHeapNode* currentNode = currentTree;
-                while (currentNode) {
-                    std::cout << "|" << currentNode->key  << "|" << "----";
-                    currentNode = currentNode->rightSibling;
-                }
-                std::cout << std::endl;
-
-                if ( !currentTree->leftChild && currentTree->rightChild ) {
-                    std::cout << "|" << currentTree->rightChild->key  << "|";
-                    break;
-                } else {
-                    currentTree = currentTree->leftChild;
-                }
-            }
-            std::cout << std::endl << "---------------------------------" << std::endl;
+            printTree((currentBrother));
             currentBrother = currentBrother->rightSibling;
         }
+//            BinomHeapNode* currentTree = currentBrother->leftChild;
+//
+//            std::cout << "|" << currentBrother->key  << "|";
+//            if ( !currentBrother->leftChild && currentBrother->rightChild ) {
+//                std::cout << std::endl << "------ |" << currentBrother->rightChild->key << "|";
+//
+//                std::cout << std::endl << "----------------new tree-----------------" << std::endl;
+//                currentBrother = currentBrother->rightSibling;
+//                continue;
+//            }
+//            while ( currentTree ) {
+//                BinomHeapNode* currentNode = currentTree;
+//                while (currentNode) {
+//                    std::cout << "|" << currentNode->key  << "|" << "----";
+//                    currentNode = currentNode->rightSibling;
+//                }
+//                std::cout << std::endl;
+//
+//                if ( !currentTree->leftChild && currentTree->rightChild ) {
+//                    std::cout << "|" << currentTree->rightChild->key  << "|";
+//                    break;
+//                } else {
+//                    currentTree = currentTree->leftChild;
+//                }
+//            }
+//            std::cout << std::endl << "----------------new tree-----------------" << std::endl;
+//            currentBrother = currentBrother->rightSibling;
+//        }
 
+    }
 
+    void printTree(BinomHeapNode* node) {
+        std::cout << node->key << std::endl;
+        printChildren(node);
+    }
 
+    void printChildren(BinomHeapNode* node) {
+        if ( !leftChild && rightChild ) {
+            std::cout << node->rightChild->key << std::endl;
+            return;
+        } else if ( leftChild ) {
+            printChildren(leftChild);
+            BinomHeapNode* t = leftChild->rightSibling;
+            while (t) {
+                printChildren((t));
+                t = t->rightSibling;
+            }
+        }
     }
 };
 
@@ -117,12 +141,14 @@ public:
 
     BinomHeap() = default;
 
-    void link(BinomHeapNode* node) {
-        if (!head) {
-            head = node;
+    BinomHeapNode* link(BinomHeapNode* from, BinomHeapNode* to) {
+        if ( to ) {
+            to->rightSibling = from;
         } else {
-            head->rightSibling = node;
+            to = from;
+            head = from;
         }
+        return to;
     }
 
     void insert(int x) {
@@ -140,18 +166,19 @@ public:
         }
 
         BinomHeap resultHeap = BinomHeap();
+        BinomHeapNode* currentHead = resultHeap.head;
 
         BinomHeapNode* head1 = this->head;
         BinomHeapNode* head2 = newHeap.head;
 
         while (head1 || head2) {
             if ( head1 && head2) {
-                if ( firstLessAndNotEqualResult(head1, head2, &resultHeap) ) {
-                    resultHeap.link(head1);
+                if ( firstLessAndNotEqualResult(head1, head2, currentHead) ) {
+                    currentHead = link(head1, currentHead);
                     head1 = head1->rightSibling;
                     continue;
-                } else if ( firstLessAndNotEqualResult(head2, head1, &resultHeap) ) {
-                    resultHeap.link(head2);
+                } else if ( firstLessAndNotEqualResult(head2, head1, currentHead) ) {
+                    currentHead = link(head2, currentHead);
                     head2 = head2->rightSibling;
                     continue;
                 }
@@ -162,10 +189,10 @@ public:
 
                     tree1 = merge(tree1, tree2);
 
-                    if ( equalDegree(tree1, resultHeap) ) {
-                        resultHeap.head = merge(tree1, resultHeap.head);
+                    if ( equalDegree(tree1, currentHead) ) {
+                        currentHead = merge(tree1, currentHead);
                     } else {
-                        resultHeap.link((tree1));
+                        currentHead = link(tree1, currentHead);
                     }
 
                     head1 = head1->rightSibling;
@@ -174,24 +201,22 @@ public:
                 }
             }
             if (head1) {
-                if ( equalDegree(head1, resultHeap) ) {
-                    resultHeap.head = merge(head1, resultHeap.head);
-                } {
-                    resultHeap.link(head1);
+                if ( equalDegree(head1, currentHead) ) {
+                    currentHead = merge(head1, currentHead);
+                } else {
+                    currentHead = link(head1, currentHead);
                 }
                 head1 = nullptr;
             }
             if (head2) {
-                if ( equalDegree(head2, resultHeap) ) {
-                    resultHeap.head = merge(head2, resultHeap.head);
-                } {
-                    resultHeap.link(head2);
+                if ( equalDegree(head2, currentHead) ) {
+                    currentHead = merge(head2, currentHead);
+                } else {
+                    currentHead = link(head2, currentHead);
                 }
                 head2 = nullptr;
             }
         }
-
-        head = resultHeap.head;
     }
 
     BinomHeapNode* merge(BinomHeapNode* node1, BinomHeapNode* node2) {
@@ -240,27 +265,35 @@ public:
         deleteMin();
     }
 
-    void print() {
+//    void print() {
+//        if (head == NULL)
+//            return;
+//        else {
+//            inorder(root->left);
+//            cout << root->key << "  ";
+//            inorder(root->right);
+//        }
+//        return;
+//    }
+//
+    void print1() {
         head->print();
     }
 
 private:
-    bool equalDegree(BinomHeapNode* node1, BinomHeap heap) {
-        if (heap.head) {
-            return node1->degree == heap.head->degree;
+
+    bool equalDegree(BinomHeapNode* node1, BinomHeapNode* node2) {
+        if (node1 && node2) {
+            return node1->degree == node2->degree;
         } else {
             return false;
         }
     }
 
-    bool equalDegree(BinomHeapNode* node1, BinomHeapNode* node2) {
-        return node1->degree == node2->degree;
-    }
-
-    bool firstLessAndNotEqualResult(BinomHeapNode* head1, BinomHeapNode* head2, BinomHeap* heap) {
+    bool firstLessAndNotEqualResult(BinomHeapNode* head1, BinomHeapNode* head2, BinomHeapNode* currentHead) {
         return ( head1->degree < head2->degree )
                &&
-               ( !heap->head || head1->degree != heap->head->degree );
+               ( !currentHead || head1->degree != currentHead->degree );
     };
 
 };
