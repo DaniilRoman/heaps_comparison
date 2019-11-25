@@ -265,18 +265,7 @@ public:
         deleteMin();
     }
 
-//    void print() {
-//        if (head == NULL)
-//            return;
-//        else {
-//            inorder(root->left);
-//            cout << root->key << "  ";
-//            inorder(root->right);
-//        }
-//        return;
-//    }
-//
-    void print1() {
+    void print() {
         head->print();
     }
 

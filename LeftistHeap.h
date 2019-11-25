@@ -3,6 +3,7 @@
 //
 
 #include <utility>
+#include <iostream>
 
 #ifndef PROJECTS_LEFTISTHEAP_H
 #define PROJECTS_LEFTISTHEAP_H
@@ -47,11 +48,11 @@ public:
         if (node2->key < node1->key) {
             swap(node1, node2);
         }
-        node1->right = merge(node1->right, node2);
-        if ( node1->right->dist > node1->left->dist ) {
+        node1->left = merge(node1->left, node2);
+        if ( node1->right && node1->right->dist > node1->left->dist ) {
             swap(node1->left, node2->right);
         }
-        node1->dist = node1->right->dist + 1;
+        node1->dist = node1->left->dist + 1;
         return node1;
     }
 
@@ -63,12 +64,10 @@ public:
         return std::make_pair(root->key, LeftistHeap(merge(root->left, root->right)) );
     }
 
-    void decreaseKey(int x) {
-
+    void print() {
+        print(root, "c");
+        std::cout << std::endl << "++++++++++++++++++++++++++++" << std::endl;
     }
-
-
-
 
 
 private:
@@ -78,6 +77,18 @@ private:
         LeftistNode tmp = *node1;
         *node1 = *node2;
         *node2 = tmp;
+    }
+
+
+    void print(LeftistNode* node, std::string str) {
+        if (node == nullptr)
+            return;
+        else {
+            print(node->left, "l");
+            std::cout << str+": " << node->key << "  ";
+            print(node->right, "r");
+        }
+        return;
     }
 
 };
