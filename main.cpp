@@ -17,8 +17,8 @@ int main() {
 
 
 //    BinomHeap heap = BinomHeap(3);
-//    LeftistHeap heap = LeftistHeap(3);
-    SkewHeap heap = SkewHeap(3);
+    LeftistHeap heap = LeftistHeap(3);
+//    SkewHeap heap = SkewHeap(3);
     heap.print();
     heap.insert(4);
     heap.print();

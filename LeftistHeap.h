@@ -48,11 +48,19 @@ public:
         if (node2->key < node1->key) {
             swap(node1, node2);
         }
-        node1->left = merge(node1->left, node2);
-        if ( node1->right && node1->right->dist > node1->left->dist ) {
-            swap(node1->left, node2->right);
+        node1->right = merge(node1->right, node2);
+
+        if (node1->left == nullptr) {
+            node1->left = node1->right;
+            node1->right = nullptr;
+        } else {
+            if ( node1->left->dist < node1->right->dist ) {
+                swap(node1->left, node1->right);
+            }
+
+            node1->dist = node1->right->dist + 1;
         }
-        node1->dist = node1->left->dist + 1;
+
         return node1;
     }
 
