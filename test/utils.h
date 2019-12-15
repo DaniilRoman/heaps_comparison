@@ -17,9 +17,9 @@ vector<int> getVector(int n) {
     vector<int> array = {};
 
     mt19937 gen;
-    uniform_int_distribution<> dis(1, n);
+    uniform_int_distribution<> dis(1, 100000);
 
-    for (int n=0; n<100; ++n) {
+    for (int i=0; i<n; i++) {
         array.push_back(dis(gen));
     }
 

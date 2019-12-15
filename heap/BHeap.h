@@ -31,6 +31,13 @@ public:
         deleteMin();
     }
 
+    void deleteMin() {
+        swap(0, n-1);
+        n--;
+        heap.pop_back();
+        diving(0);
+    }
+
     void makeHeap() {
         for (int i=n-1; i>=0; i--) {
             diving(i);
@@ -120,13 +127,6 @@ private:
     void decreaseToMin(int i) {
         heap[i] -= INT16_MAX;
         emersion(i);
-    }
-
-    void deleteMin() {
-        swap(0, n-1);
-        n--;
-        heap.pop_back();
-        diving(0);
     }
 
 };

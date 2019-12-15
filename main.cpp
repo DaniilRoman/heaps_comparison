@@ -4,7 +4,7 @@
 
 int main() {
     Run run = Run();
-    run.testDInBHeap();
+    run.runTest();
 
 //    vector<vector<int>> test(4);
 //    test[2].push_back(4);
