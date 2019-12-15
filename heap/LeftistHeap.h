@@ -68,8 +68,8 @@ public:
         merge(LeftistHeap(k));
     }
 
-    std::pair <int, LeftistHeap> extractMin() {
-        return std::make_pair(root->key, LeftistHeap(merge(root->left, root->right)) );
+    void deleteMin() {
+        root = merge(root->left, root->right);
     }
 
     void print() {
@@ -93,8 +93,8 @@ private:
             return;
         else {
             print(node->left, "l");
-            std::cout << str+": " << node->key << "  ";
             print(node->right, "r");
+            std::cout << str+": " << node->key << "  ";
         }
         return;
     }

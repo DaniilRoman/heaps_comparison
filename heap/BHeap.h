@@ -9,13 +9,15 @@
 class BHeap {
 public:
 
-    int n = 10;
-    std::vector<int> heap = {1, 2, 5, 4, 3, 9, 8, 3, 77, 55};
+    int n;
+    std::vector<int> heap = {};
 
     int d;
 
-    BHeap(int d) {
+    BHeap(int d, std::vector<int> heap) {
         this->d = d;
+        this->heap = heap;
+        n = heap.size();
     }
 
     void insert(int v) {
@@ -24,7 +26,7 @@ public:
         emersion(n-1);
     }
 
-    void deleteBy(int i) {
+    void remove(int i) {
         decreaseToMin(i);
         deleteMin();
     }

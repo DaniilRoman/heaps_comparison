@@ -1,32 +1,18 @@
 #include <iostream>
-#include "BHeap.h"
-#include "BinomHeap.h"
-#include "LeftistHeap.h"
-#include "SkewHeap.h"
+#include <fstream>
+#include "test/numbers.h"
 
 int main() {
-//    BHeap* heap = new BHeap(3);
+    Run run = Run();
+    run.testDInBHeap();
+
+//    vector<vector<int>> test(4);
+//    test[2].push_back(4);
+//    cout << " " << test[2][0] << endl;
 //
-//    heap->print();
-//    heap->makeHeap();
-//    heap->print();
-//    heap->insert(4);
-//    heap->print();
-//    heap->deleteBy(3);
-//    heap->print();
 
-
-//    BinomHeap heap = BinomHeap(3);
-    LeftistHeap heap = LeftistHeap(3);
-//    SkewHeap heap = SkewHeap(3);
-    heap.print();
-    heap.insert(4);
-    heap.print();
-    heap.insert(5);
-    heap.print();
-    heap.insert(2);
-    heap.print();
 
 
     return 0;
 }
+

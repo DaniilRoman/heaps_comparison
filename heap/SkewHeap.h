@@ -68,8 +68,8 @@ public:
         std::cout << std::endl << "++++++++++++++++++++++++++++" << std::endl;
     }
 
-    std::pair<int, SkewHeap> extractMin() {
-        return std::make_pair(root->key, SkewHeap(merge(root->left, root->right)));
+    void deleteMin() {
+        root = merge(root->left, root->right);
     }
 
 
@@ -83,7 +83,9 @@ private:
     }
 
     SkewNode *remove(SkewNode *node, int key) {
-        if (node == nullptr) return nullptr;
+        if (node == nullptr) {
+            return nullptr;
+        }
 
         if (node->left && node->left->key == key) {
             node->left = merge(node->left->left, node->left->right);
@@ -99,12 +101,12 @@ private:
     }
 
     void print(SkewNode *node, std::string str) {
-        if (node == nullptr)
+        if (node == nullptr) {
             return;
-        else {
+        } else {
             print(node->left, "l");
-            std::cout << str + ": " << node->key << "  ";
             print(node->right, "r");
+            std::cout << str + ": " << node->key << "  ";
         }
         return;
     }
