@@ -1,17 +1,20 @@
 #include <iostream>
-#include <fstream>
-#include "test/numbers.h"
+#include "test/runner.h"
 
 int main() {
-    Run run = Run();
+//    BHeap  heap = BHeap(1000, getVector(2000000));
+    auto start = std::chrono::high_resolution_clock::now();
+    /////////////////////////////
+
+    Runner run = Runner();
     run.runTest();
-
-//    vector<vector<int>> test(4);
-//    test[2].push_back(4);
-//    cout << " " << test[2][0] << endl;
-//
+//    heap.insert(10000);
 
 
+    /////////////////////////////
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start).count();
+    std::cout << "DURATION: " << duration;
 
     return 0;
 }

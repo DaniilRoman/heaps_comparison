@@ -5,41 +5,71 @@
 #include <iostream>
 #include <random>
 #include <chrono>
+#include <fstream>
 #include "../heap/LeftistHeap.h"
 #include "utils.h"
 #include "../heap/BHeap.h"
+#include "../heap/AbstractHeap.h"
 
 using namespace std;
 
-class Run {
+static int n = 100000;
+static vector<int> vec = getVector(n);
+static auto getBHeap = [](int param) { return BHeap(param, vec); };
+
+class Runner {
 
 public:
-    int n = 100000;
-    vector<int> vec = getVector(n);
     vector<int> dParam = {2, 3, 5, 7, 10, 20, 33, 55, 100, 1000, 5000, 10000};
+    vector<int> heapSizeParam = {100, 1000, 10000, 50000, 100000, 500000, 1000000};
+//    vector<int> heapSizeParam = { 1000000, 500000, 100000, 50000, 10000, 1000, 100 };
 
     void runTest() {
-        testDInBHeapInsert();
-        testDInBHeapRemove();
-        testDInBHeapDeleteMin();
+//        testDInBHeapInsert();
+//        testDInBHeapRemove();
+//        testDInBHeapDeleteMin();
+//        testInsertBHeap();
+//        testRemoveBHeap();
+//        testDeleteMinBHeap();
         cout << " " << "END-END-END" << endl;
+    }
+
+    void testInsertBHeap() {
+        auto insert = [](BHeap heap) { heap.insert(1000); };
+        auto getHeap = [](int param) { return BHeap(1000, getVector(param)); };
+        vector<float> averages = performAndGetAverages(heapSizeParam, insert, getHeap);
+        saveResultsToCSVWithHeader("insert_d_heap", heapSizeParam, averages);
+    }
+
+    void testRemoveBHeap() {
+        auto remove = [](BHeap heap) { heap.remove(1000); };
+        auto getHeap = [](int param) { return BHeap(1000, getVector(param)); };
+        vector<float> averages = performAndGetAverages(heapSizeParam, remove, getHeap);
+        saveResultsToCSVWithHeader("remove_d_heap", heapSizeParam, averages);
+    }
+
+    void testDeleteMinBHeap() {
+        auto deleteMin = [](AbstractHeap<T> heap) { heap.deleteMin(); };
+        auto getHeap = [](int param) { return BHeap(1000, getVector(param)); };
+        vector<float> averages = performAndGetAverages(heapSizeParam, deleteMin, getHeap);
+        saveResultsToCSVWithHeader("delete_min_d_heap", heapSizeParam, averages);
     }
 
     void testDInBHeapDeleteMin() {
         auto deleteMin = [](BHeap heap) { heap.deleteMin(); };
-        vector<float> averages = performAndGetAverages(dParam, deleteMin);
+        vector<float> averages = performAndGetAverages(dParam, deleteMin, getBHeap);
         saveResultsToCSVWithHeader("d_param_delete_min", dParam, averages);
     }
 
     void testDInBHeapInsert() {
         auto insert = [](BHeap heap) { heap.insert(1000); };
-        vector<float> averages = performAndGetAverages(dParam, insert);
+        vector<float> averages = performAndGetAverages(dParam, insert, getBHeap);
         saveResultsToCSVWithHeader("d_param_insert", dParam, averages);
     }
 
     void testDInBHeapRemove() {
         auto remove = [](BHeap heap) { heap.remove(1000); };
-        vector<float> averages = performAndGetAverages(dParam, remove);
+        vector<float> averages = performAndGetAverages(dParam, remove, getBHeap);
         saveResultsToCSVWithHeader("d_param_remove", dParam, averages);
     }
 
@@ -48,15 +78,15 @@ public:
         saveResultsToCSV(name, values);
     }
 
-    template<typename Functor>
-    vector<float> performAndGetAverages(vector<int> params, Functor func) {
+    template<typename Functor, typename GetHeap>
+    vector<float> performAndGetAverages(vector<int> params, Functor func, GetHeap getHeap) {
         int repeatNumber = 1000;
         vector<vector<int>> results(params.size());
 
         for (int k = 0; k < repeatNumber; k++) {
             for (int i = 0; i < params.size(); i++) {
-                BHeap heap = BHeap(params[i], vec);
-                heap.makeHeap();
+                BHeap heap = getHeap(params[i]);
+//                heap.makeHeap();
                 /////////////////////
                 auto start = std::chrono::high_resolution_clock::now();
 
