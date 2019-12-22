@@ -32,7 +32,7 @@ public:
     }
 
     SkewHeap(std::vector<T> values) {
-        T startValue = values[values.size()];
+        T startValue = values[values.size()-1];
         values.pop_back();
         root = new SkewNode<T>(startValue);
         for (T value : values) {

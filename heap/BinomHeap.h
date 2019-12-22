@@ -32,29 +32,29 @@ public:
         this->rightChild = rightChild;
     }
 
+//    BinomNode(T key, int degree, BinomNode *leftChild, BinomNode *rightChild, BinomNode *rightSibling) {
+//        BinomNode(key, degree, leftChild, rightChild);
+//        this->rightSibling = rightSibling;
+//    }
+
     BinomNode *getTree() {
         return new BinomNode{key, degree, leftChild, rightChild};
     }
 
     void merge(BinomNode *node) {
-//        rightSibling = nullptr;
-//        node->rightSibling = nullptr;
-//
-//        if (rightChild) {
-//            rightChild->rightSibling = node;
-//            if (!leftChild) {
-//                leftChild = rightChild;
-//            }
-//        }
-//
-//        rightChild = node;
-//        node->parent = this;
-//        this->degree++;
+        rightSibling = nullptr;
+        node->rightSibling = nullptr;
 
+        if (rightChild) {
+            rightChild->rightSibling = node;
+            if (!leftChild) {
+                leftChild = rightChild;
+            }
+        }
+
+        rightChild = node;
         node->parent = this;
-        node->rightSibling = leftChild;
-        leftChild = node;
-        degree++;
+        this->degree++;
     }
 
     void decreaseKey(T delta) {
@@ -89,7 +89,7 @@ public:
     }
 
     BinomHeap(std::vector<T> values) {
-        T startValue = values[values.size()];
+        T startValue = values[values.size()-1];
         values.pop_back();
         root = new BinomNode<T>(startValue);
         for (T value : values) {
@@ -106,8 +106,9 @@ public:
         if (to) {
             to->rightSibling = from;
         } else {
+            // when current root is null
             to = from;
-            root = from; // веряотно не правильно так как рутом становился левая нода нижних слоев
+            root = from;
         }
         return to;
     }
@@ -147,7 +148,6 @@ public:
                     root2 = root2->rightSibling;
                     continue;
                 }
-
                 if (equalDegree(root1, root2)) {
                     BinomNode<T> *tree1 = root1->getTree();
                     BinomNode<T> *tree2 = root2->getTree();
@@ -167,21 +167,26 @@ public:
             }
             if (root1) {
                 if (equalDegree(root1, currentRoot)) {
-                    currentRoot = merge(root1, currentRoot);
+                    BinomNode<T> *tree1 = root1->getTree();
+                    currentRoot = merge(tree1, currentRoot);
+                    root1 = root1->rightSibling;
                 } else {
                     currentRoot = link(root1, currentRoot);
+                    root1 = nullptr;
                 }
-                root1 = nullptr;
             }
             if (root2) {
                 if (equalDegree(root2, currentRoot)) {
-                    currentRoot = merge(root2, currentRoot);
+                    BinomNode<T> *tree2 = root2->getTree();
+                    currentRoot = merge(tree2, currentRoot);
+                    root2 = root2->rightSibling;
                 } else {
                     currentRoot = link(root2, currentRoot);
+                    root2 = nullptr;
                 }
-                root2 = nullptr;
             }
         }
+        root = currentRoot;
     }
 
     BinomNode<T> *merge(BinomNode<T> *node1, BinomNode<T> *node2) {
@@ -254,20 +259,41 @@ private:
     }
 
     BinomNode<T> *findNodeByKey(BinomNode<T> *node, T key) {
-        if (node == nullptr) {
-            return nullptr;
-        }
+//        if (node == nullptr) {
+//            return nullptr;
+//        }
+//
+//        if (node->key == key) {
+//            return node;
+//        }
+//
+//        if (node->rightSibling) {
+//            findNodeByKey(node->rightSibling, key);
+//        }
+//        if (node->leftChild) {
+//            findNodeByKey(node->leftChild, key);
+//        } else if (node->leftChild) {
+//            findNodeByKey(node->rightChild, key);
+//        }
 
-        if (node->key == key) {
-            return node;
-        }
-
-        findNodeByKey(node->rightSibling, key);
-
-        if (node->leftChild) {
-            findNodeByKey(node->leftChild, key);
+        if(node != nullptr){
+            if(node->key == key){
+                return node;
+            } else {
+                BinomNode<T>* foundNode = nullptr;
+                if (node->rightSibling) {
+                    foundNode = findNodeByKey(node->rightSibling, key);
+                }
+                if(foundNode == nullptr && node->rightChild) {
+                    foundNode = findNodeByKey(node->rightChild, key);
+                }
+                if(foundNode == nullptr && node->leftChild) {
+                    foundNode = findNodeByKey(node->leftChild, key);
+                }
+                return foundNode;
+            }
         } else {
-            findNodeByKey(node->rightChild, key);
+            return nullptr;
         }
     }
 

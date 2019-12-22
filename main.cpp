@@ -10,8 +10,14 @@ int main() {
 
 //    AbstractHeap<int>* heap = new SkewHeap<int>(getVector(20000));
     Runner<int> run = Runner<int>();
-//    run.runTest();
-    run.dummyTest();
+    run.runTest();
+//    run.dummyTest();
+
+
+//    AbstractHeap<int>* heap1 = new LeftistHeap<int>(getVector(5));
+//    AbstractHeap<int>* heap2 = new LeftistHeap<int>(getVector(5));
+//    heap1->merge(heap2);
+
 
 //    std::vector<int> v1 = {1, 2};
 //    std::vector<int> v2 = {2, 3};

@@ -33,7 +33,7 @@ public:
     }
 
     LeftistHeap(std::vector<T> values) {
-        T startValue = values[values.size()];
+        T startValue = values[values.size()-1];
         values.pop_back();
         root = new LeftistNode<T>(startValue);
         for (T value : values) {

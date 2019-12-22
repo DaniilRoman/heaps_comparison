@@ -30,11 +30,13 @@ auto SkewHeap_ = [](int param) { return new SkewHeap<T>(getVector(param)); };
 template<typename T>
 auto DHeap_ = [](int param) { return new BHeap<T>(55, getVector(param)); };
 template<typename T>
-auto insert = [](AbstractHeap<T>* heap) { heap->insert(1000); };
+auto insert = [](AbstractHeap<T>* heap, AbstractHeap<T>* heap2) { heap->insert(1000); };
 template<typename T>
-auto removeFunc = [](AbstractHeap<T>* heap) { heap->remove(1000); };
+auto removeFunc = [](AbstractHeap<T>* heap, AbstractHeap<T>* heap2) { heap->remove(1000); };
 template<typename T>
-auto deleteMin = [](AbstractHeap<T>* heap) { heap->deleteMin(); };
+auto deleteMin = [](AbstractHeap<T>* heap, AbstractHeap<T>* heap2) { heap->deleteMin(); };
+template<typename T>
+auto merge = [](AbstractHeap<T>* heap1, AbstractHeap<T>* heap2) { heap1->merge(heap2); };
 
 
 template<typename T>
@@ -57,15 +59,18 @@ public:
 //        testDeleteMinBHeap();
 
 //        testInsertBinomialHeap();
-        testRemoveBinomialHeap();
+//        testRemoveBinomialHeap();
 //        testDeleteMinBinomialHeap();
+//        testMergeBinomialHeap();
 
 //        testInsertSkewHeap();
 //        testRemoveSkewHeap();
 //        testDeleteMinSkewHeap();
+//        testMergeSkewHeap();
 
 //        testInsertLeftistHeap();
 //        testDeleteMinLeftistHeap();
+        testMergeLeftistHeap();
         cout << " " << "END-END-END" << endl;
     }
 
@@ -86,6 +91,11 @@ public:
         saveResultsToCSVWithHeader("delete_min_skew_heap", heapSizeParam, averages);
     }
 
+    void testMergeSkewHeap() {
+        vector<float> averages = performAndGetAverages(heapSizeParam, merge<T>, SkewHeap_<T>, new SkewHeap<T>(getVector(1000)));
+        saveResultsToCSVWithHeader("merge_skew_heap", heapSizeParam, averages);
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     void testInsertLeftistHeap() {
@@ -96,6 +106,11 @@ public:
     void testDeleteMinLeftistHeap() {
         vector<float> averages = performAndGetAverages(heapSizeParam, deleteMin<T>, LeftistHeap_<T>);
         saveResultsToCSVWithHeader("delete_min_leftist_heap", heapSizeParam, averages);
+    }
+
+    void testMergeLeftistHeap() {
+        vector<float> averages = performAndGetAverages(heapSizeParam, merge<T>, LeftistHeap_<T>, new LeftistHeap<T>(getVector(1000)));
+        saveResultsToCSVWithHeader("merge_leftist_heap", heapSizeParam, averages);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -113,6 +128,11 @@ public:
     void testDeleteMinBinomialHeap() {
         vector<float> averages = performAndGetAverages(heapSizeParam, deleteMin<T>, BinomialHeap_<T>);
         saveResultsToCSVWithHeader("delete_min_binomial_heap", heapSizeParam, averages);
+    }
+
+    void testMergeBinomialHeap() {
+        vector<float> averages = performAndGetAverages(heapSizeParam, merge<T>, BinomialHeap_<T>, new BinomHeap<T>(getVector(1000)));
+        saveResultsToCSVWithHeader("merge_binomial_heap", heapSizeParam, averages);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -153,7 +173,7 @@ public:
 private :
 
     template<typename Functor, typename GetHeap>
-    vector<float> performAndGetAverages(vector<int> params, Functor func, GetHeap getHeap) {
+    vector<float> performAndGetAverages(vector<int> params, Functor func, GetHeap getHeap, AbstractHeap<T>* heapForMerge = nullptr) {
         vector<vector<int>> results(params.size());
 
         for (int k = 0; k < repeatNumber; k++) {
@@ -162,7 +182,7 @@ private :
 
                 auto start = std::chrono::high_resolution_clock::now();
                 //+++++++++++++++++++
-                func(heap);
+                func(heap, heapForMerge);
                 //+++++++++++++++++++
                 auto stop = std::chrono::high_resolution_clock::now();
                 auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start).count();
@@ -223,20 +243,58 @@ public:
     BinomHeap<int> heap = BinomHeap<int>(3);
 //        LeftistHeap heap = LeftistHeap<int>(3);
 //    SkewHeap heap = SkewHeap(3);
-        heap.print();
         heap.insert(4);
-        heap.print();
         heap.insert(5);
-        heap.print();
         heap.insert(2);
-        heap.print();
         heap.insert(20);
-        heap.print();
         heap.insert(88);
-        heap.print();
         heap.insert(33);
         heap.print();
         heap.insert(1);
+        heap.print();
+        heap.insert(95648);
+        heap.print();
+        heap.insert(35684);
+        heap.print();
+        heap.insert(11111);
+        heap.print();
+        heap.insert(32222);
+        heap.print();
+        heap.insert(99999);
+        heap.print();
+        heap.insert(4444);
+        heap.print();
+        heap.insert(3333);
+        heap.print();
+        heap.insert(2222);
+        heap.print();
+        heap.insert(48);
+        heap.print();
+        heap.insert(65);
+        heap.print();
+        heap.insert(55);
+        heap.print();
+        heap.insert(11);
+        heap.print();
+        heap.print();
+        heap.insert(2222);
+        heap.print();
+        heap.insert(48);
+        heap.print();
+        heap.insert(65);
+        heap.print();
+        heap.insert(55);
+        heap.print();
+        heap.insert(11);
+        heap.print();
+        heap.print();
+        heap.insert(48);
+        heap.print();
+        heap.insert(65);
+        heap.print();
+        heap.insert(55);
+        heap.print();
+        heap.insert(11);
         heap.print();
 
         cout  << endl << "end;" << endl;
