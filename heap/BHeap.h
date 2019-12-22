@@ -1,47 +1,47 @@
 //
 // Created by daniil on 04.11.2019.
 //
+#pragma once
 #include <vector>
-#ifndef PROJECTS_BHEAP_H
-#define PROJECTS_BHEAP_H
 
-
-class BHeap {
+template<typename T>
+class BHeap : public AbstractHeap<T>  {
 public:
 
     int n;
-    std::vector<int> heap = {};
+    std::vector<T> heap = {};
 
     int d;
 
-    BHeap(int d, std::vector<int> heap) {
+    BHeap(int d, std::vector<T> heap) {
         this->d = d;
         this->heap = heap;
         n = heap.size();
+        makeHeap();
     }
 
-    void insert(int v) {
+    void insert(T v) override {
         n++;
         heap[n-1] = v;
         emersion(n-1);
     }
 
-    void remove(int i) {
+    void remove(T i) override {
         decreaseToMin(i);
         deleteMin();
     }
 
-    void deleteMin() {
+    T deleteMin() override {
+        T min = heap[0];
         swap(0, n-1);
         n--;
         heap.pop_back();
         diving(0);
+        return min;
     }
 
-    void makeHeap() {
-        for (int i=n-1; i>=0; i--) {
-            diving(i);
-        }
+    void merge(AbstractHeap<T>* heap) override {
+        cout << "Not available on BHEap" << endl;
     }
 
     void print() {
@@ -78,7 +78,7 @@ private:
         }
         int rc = rightChild(i);
         int minIndex = n+1;
-        int minValue = INT16_MAX;
+        T minValue = getMaxValue<T>();
 
         for (int idx=lc; idx<=rc; idx++) {
             if (heap[idx] < minValue) {
@@ -125,11 +125,15 @@ private:
     }
 
     void decreaseToMin(int i) {
-        heap[i] -= INT16_MAX;
+        heap[i] -= getMaxValue<T>();
         emersion(i);
+    }
+
+    void makeHeap() {
+        for (int i=n-1; i>=0; i--) {
+            diving(i);
+        }
     }
 
 };
 
-
-#endif //PROJECTS_BHEAP_H

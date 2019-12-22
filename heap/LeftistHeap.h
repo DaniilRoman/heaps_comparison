@@ -4,41 +4,55 @@
 
 #include <utility>
 #include <iostream>
+#include "AbstractHeap.h"
 
-#ifndef PROJECTS_LEFTISTHEAP_H
-#define PROJECTS_LEFTISTHEAP_H
-
-#endif //PROJECTS_LEFTISTHEAP_H
-
-
+template <typename T>
 class LeftistNode {
 public:
-    int key, dist;
+    T key;
+    int dist;
     LeftistNode *left = nullptr;
     LeftistNode *right = nullptr;
 
-    LeftistNode(int key) {
+    LeftistNode(T key) {
         this->key = key;
         dist = 0;
     }
 };
 
-class LeftistHeap {
+template <typename T>
+class LeftistHeap : public AbstractHeap<T> {
 
 public:
     LeftistHeap(int key) {
-        this->root = new LeftistNode(key);
+        this->root = new LeftistNode<T>(key);
     }
 
-    LeftistHeap(LeftistNode* node) {
+    LeftistHeap(LeftistNode<T>* node) {
         this->root = node;
+    }
+
+    LeftistHeap(std::vector<T> values) {
+        T startValue = values[values.size()];
+        values.pop_back();
+        root = new LeftistNode<T>(startValue);
+        for (T value : values) {
+            insert(value);
+        }
+    }
+
+    LeftistHeap() = default;
+    ~LeftistHeap() = default;
+
+    void merge(AbstractHeap<T>* newHeap) override {
+        merge(dynamic_cast<LeftistHeap&>(*newHeap));
     }
 
     void merge(LeftistHeap heap) {
         root = merge(root, heap.root);
     }
 
-    LeftistNode* merge(LeftistNode* node1, LeftistNode* node2) {
+    LeftistNode<T>* merge(LeftistNode<T>* node1, LeftistNode<T>* node2) {
         if (node1 == nullptr) {
             return node2;
         }
@@ -64,13 +78,17 @@ public:
         return node1;
     }
 
-    void insert(int k) {
+    void insert(int k) override {
         merge(LeftistHeap(k));
     }
 
-    void deleteMin() {
+    T deleteMin() override {
+        T minValue = root->key;
         root = merge(root->left, root->right);
+        return minValue;
     }
+
+    void remove(T value) override { }
 
     void print() {
         print(root, "c");
@@ -79,16 +97,16 @@ public:
 
 
 private:
-    LeftistNode *root;
+    LeftistNode<T> *root;
 
-    void swap(LeftistNode* node1, LeftistNode* node2) {
-        LeftistNode tmp = *node1;
+    void swap(LeftistNode<T>* node1, LeftistNode<T>* node2) {
+        LeftistNode<T> tmp = *node1;
         *node1 = *node2;
         *node2 = tmp;
     }
 
 
-    void print(LeftistNode* node, std::string str) {
+    void print(LeftistNode<T>* node, std::string str) {
         if (node == nullptr)
             return;
         else {

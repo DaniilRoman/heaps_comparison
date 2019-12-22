@@ -2,28 +2,30 @@
 // Created by daniil on 20.11.2019.
 //
 
-#ifndef PROJECTS_BINOMHEAP_H
-#define PROJECTS_BINOMHEAP_H
-
+#pragma once
 #include <utility>
 #include <vector>
+#include "AbstractHeap.h"
+#include "../test/utils.h"
 
 using namespace std;
 
+template<typename T>
 class BinomNode {
 public:
-    int key, degree;
+    T key;
+    int degree;
     BinomNode *parent = nullptr;
     BinomNode *leftChild = nullptr;
     BinomNode *rightChild = nullptr;
     BinomNode *rightSibling = nullptr;
 
-    BinomNode(int key) {
+    BinomNode(T key) {
         this->key = key;
         degree = 1;
     }
 
-    BinomNode(int key, int degree, BinomNode *leftChild, BinomNode *rightChild) {
+    BinomNode(T key, int degree, BinomNode *leftChild, BinomNode *rightChild) {
         this->key = key;
         this->degree = degree;
         this->leftChild = leftChild;
@@ -35,26 +37,31 @@ public:
     }
 
     void merge(BinomNode *node) {
-        rightSibling = nullptr;
-        node->rightSibling = nullptr;
+//        rightSibling = nullptr;
+//        node->rightSibling = nullptr;
+//
+//        if (rightChild) {
+//            rightChild->rightSibling = node;
+//            if (!leftChild) {
+//                leftChild = rightChild;
+//            }
+//        }
+//
+//        rightChild = node;
+//        node->parent = this;
+//        this->degree++;
 
-        if (rightChild) {
-            rightChild->rightSibling = node;
-            if (!leftChild) {
-                leftChild = rightChild;
-            }
-        }
-
-        rightChild = node;
         node->parent = this;
-        this->degree++;
+        node->rightSibling = leftChild;
+        leftChild = node;
+        degree++;
     }
 
-    void decreaseKey(int delta) {
+    void decreaseKey(T delta) {
         key -= delta;
         BinomNode *tmpParent = parent;
         while (tmpParent && tmpParent->key > key) {
-            int parentKey = tmpParent->key;
+            T parentKey = tmpParent->key;
             tmpParent->key = key;
             key = parentKey;
             tmpParent = tmpParent->parent;
@@ -66,51 +73,68 @@ public:
 // --------------------------------------------------------------------------------
 
 
-class BinomHeap {
+template<typename T>
+class BinomHeap : public AbstractHeap<T> {
 
 public:
 
-    BinomNode *root{};
+    BinomNode<T> *root{};
 
-    explicit BinomHeap(BinomNode *root) {
+    BinomHeap(BinomNode<T> *root) {
         this->root = root;
     }
 
-    explicit BinomHeap(int x) {
-        root = new BinomNode(x);
+    BinomHeap(T x) {
+        root = new BinomNode<T>(x);
     }
 
-    BinomHeap() = default;
+    BinomHeap(std::vector<T> values) {
+        T startValue = values[values.size()];
+        values.pop_back();
+        root = new BinomNode<T>(startValue);
+        for (T value : values) {
+            insert(value);
+        }
+    }
 
-    BinomNode *link(BinomNode *from, BinomNode *to) {
+    BinomHeap() {
+        root = nullptr;
+    };
+    ~BinomHeap() = default;
+
+    BinomNode<T> *link(BinomNode<T> *from, BinomNode<T> *to) {
         if (to) {
             to->rightSibling = from;
         } else {
             to = from;
-            root = from;
+            root = from; // веряотно не правильно так как рутом становился левая нода нижних слоев
         }
         return to;
     }
 
-    void insert(int x) {
+    void insert(T x) override {
         if (root == nullptr) {
-            root = new BinomNode(x);
+            root = new BinomNode<T>(x);
         } else {
             merge(BinomHeap(x));
         }
     }
 
-    void merge(BinomHeap newHeap) {
+    void merge(AbstractHeap<T>* newHeap) override {
+        merge(dynamic_cast<BinomHeap&>(*newHeap));
+    }
+
+    void merge(BinomHeap<T> newHeap) {
         if (root == nullptr) {
             root = newHeap.root;
             return;
         }
 
         BinomHeap resultHeap = BinomHeap();
-        BinomNode *currentRoot = resultHeap.root;
+        BinomNode<T> *currentRoot = resultHeap.root;
 
-        BinomNode *root1 = this->root;
-        BinomNode *root2 = newHeap.root;
+        BinomNode<T> *root1 = this->root;
+        BinomNode<T> *root2 = newHeap.root;
 
         while (root1 || root2) {
             if (root1 && root2) {
@@ -125,8 +149,8 @@ public:
                 }
 
                 if (equalDegree(root1, root2)) {
-                    BinomNode *tree1 = root1->getTree();
-                    BinomNode *tree2 = root2->getTree();
+                    BinomNode<T> *tree1 = root1->getTree();
+                    BinomNode<T> *tree2 = root2->getTree();
 
                     tree1 = merge(tree1, tree2);
 
@@ -160,7 +184,7 @@ public:
         }
     }
 
-    BinomNode *merge(BinomNode *node1, BinomNode *node2) {
+    BinomNode<T> *merge(BinomNode<T> *node1, BinomNode<T> *node2) {
         if (node1->key <= node2->key) {
             node1->merge(node2);
             return node1;
@@ -170,8 +194,8 @@ public:
         }
     }
 
-    void deleteMin() {
-        pair<BinomNode *, BinomNode *> minAndPrev = findMinAndPrev();
+    T deleteMin() override {
+        pair<BinomNode<T> *, BinomNode<T> *> minAndPrev = findMinAndPrev();
 
         if (minAndPrev.second) {
             minAndPrev.second->rightSibling = minAndPrev.first->rightSibling;
@@ -183,7 +207,7 @@ public:
             BinomHeap childrenHeap = BinomHeap(minAndPrev.first->leftChild);
 
             // delete parent links
-            BinomNode *child = minAndPrev.first->leftChild;
+            BinomNode<T> *child = minAndPrev.first->leftChild;
             while (child) {
                 child->parent = nullptr;
                 child = child->rightSibling;
@@ -195,10 +219,11 @@ public:
             this->merge(childrenHeap);
         }
 
+        return minAndPrev.first->key;
     }
 
-    void remove(int key) {
-        decreaseKey(key, INT16_MAX);
+    void remove(T key) override {
+        decreaseKey(key, getMaxValue<T>());
         deleteMin();
     }
 
@@ -209,7 +234,7 @@ public:
 
 private:
 
-    bool equalDegree(BinomNode *node1, BinomNode *node2) {
+    bool equalDegree(BinomNode<T> *node1, BinomNode<T> *node2) {
         if (node1 && node2) {
             return node1->degree == node2->degree;
         } else {
@@ -217,18 +242,18 @@ private:
         }
     }
 
-    bool firstLessAndNotEqualResult(BinomNode *root1, BinomNode *root2, BinomNode *currentRoot) {
+    bool firstLessAndNotEqualResult(BinomNode<T> *root1, BinomNode<T> *root2, BinomNode<T> *currentRoot) {
         return (root1->degree < root2->degree)
                &&
                (!currentRoot || root1->degree != currentRoot->degree);
     };
 
 
-    void decreaseKey(int key, int delta) {
+    void decreaseKey(T key, T delta) {
         findNodeByKey(root, key)->decreaseKey(delta);
     }
 
-    BinomNode *findNodeByKey(BinomNode *node, int key) {
+    BinomNode<T> *findNodeByKey(BinomNode<T> *node, T key) {
         if (node == nullptr) {
             return nullptr;
         }
@@ -247,13 +272,13 @@ private:
     }
 
 
-    pair<BinomNode *, BinomNode *> findMinAndPrev() {
+    pair<BinomNode<T> *, BinomNode<T> *> findMinAndPrev() {
         int min = root->key;
-        BinomNode *minroot = root;
-        BinomNode *prevMinroot = nullptr;
+        BinomNode<T> *minroot = root;
+        BinomNode<T> *prevMinroot = nullptr;
 
-        BinomNode *prevroot = nullptr;
-        BinomNode *currentRoot = root;
+        BinomNode<T> *prevroot = nullptr;
+        BinomNode<T> *currentRoot = root;
         while (currentRoot->rightSibling) {
             prevroot = currentRoot;
             currentRoot = currentRoot->rightSibling;
@@ -266,7 +291,7 @@ private:
         return make_pair(minroot, prevMinroot);
     }
 
-    void print(BinomNode *node, string str) {
+    void print(BinomNode<T> *node, string str) {
         if (node == nullptr) {
             return;
         } else {
@@ -283,6 +308,3 @@ private:
     }
 
 };
-
-
-#endif //PROJECTS_BINOMHEAP_H

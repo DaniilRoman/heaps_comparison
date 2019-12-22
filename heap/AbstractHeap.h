@@ -2,8 +2,6 @@
 // Created by daniil on 19.12.2019.
 //
 
-#ifndef PROJECTS_ABSTRACTHEAP_H
-#define PROJECTS_ABSTRACTHEAP_H
 
 #pragma once
 
@@ -18,5 +16,3 @@ public:
     virtual void merge(AbstractHeap<T>* heap) = 0;
 };
 
-
-#endif //PROJECTS_ABSTRACTHEAP_H

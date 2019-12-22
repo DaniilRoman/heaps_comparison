@@ -5,10 +5,7 @@
 #include <vector>
 #include <random>
 
-#ifndef PROJECTS_UTILS_H
-#define PROJECTS_UTILS_H
-
-#endif //PROJECTS_UTILS_H
+#pragma once
 
 using namespace std;
 
@@ -23,5 +20,10 @@ vector<int> getVector(int n) {
         array.push_back(dis(gen));
     }
 
+    array.push_back(1000);
     return array;
 }
+
+template <typename T> T getMaxValue() { return INT16_MAX; }
+
+template <> int getMaxValue<int>()   { return INT16_MAX; }
