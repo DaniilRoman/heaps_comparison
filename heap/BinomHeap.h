@@ -32,10 +32,27 @@ public:
         this->rightChild = rightChild;
     }
 
-//    BinomNode(T key, int degree, BinomNode *leftChild, BinomNode *rightChild, BinomNode *rightSibling) {
-//        BinomNode(key, degree, leftChild, rightChild);
-//        this->rightSibling = rightSibling;
-//    }
+    ~BinomNode() = default;
+
+    void destruct() {
+        if(rightSibling) { rightSibling->destruct(); }
+        if(leftChild) {
+            leftChild->destruct();
+            delete leftChild;
+//            delete rightChild;
+        } else if (rightChild) {
+            rightChild->destruct();
+            delete rightChild;
+//            delete leftChild;
+        }
+      if(rightSibling) { delete rightSibling; }
+//        delete parent;
+
+        rightSibling = nullptr;
+        parent = nullptr;
+        rightChild = nullptr;
+        leftChild = nullptr;
+    }
 
     BinomNode *getTree() {
         return new BinomNode{key, degree, leftChild, rightChild};
@@ -101,6 +118,11 @@ public:
         root = nullptr;
     };
     ~BinomHeap() = default;
+
+    void destruct() override {
+        root->destruct();
+        delete root;
+    }
 
     BinomNode<T> *link(BinomNode<T> *from, BinomNode<T> *to) {
         if (to) {

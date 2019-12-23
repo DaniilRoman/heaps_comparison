@@ -17,6 +17,16 @@ public:
     SkewNode(T key) {
         this->key = key;
     }
+    ~SkewNode() = default;
+
+    void destruct() {
+        if(right) { right->destruct(); }
+        if(left) { left->destruct(); }
+        delete left;
+        delete right;
+        left = nullptr;
+        right = nullptr;
+    }
 };
 
 template <typename T>
@@ -42,6 +52,11 @@ public:
 
     SkewHeap() = default;
     ~SkewHeap() = default;
+
+    void destruct() override {
+        root->destruct();
+        delete root;
+    }
 
     void merge(AbstractHeap<T>* newHeap) override {
         merge(dynamic_cast<SkewHeap&>(*newHeap));
@@ -93,7 +108,7 @@ public:
 private:
     SkewNode<T> *root;
 
-    SkewNode<T> *remove(SkewNode<T> *node, int key) {
+    SkewNode<T> *remove(SkewNode<T> *node, T key) {
         if (node == nullptr) {
             return nullptr;
         }

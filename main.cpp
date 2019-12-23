@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 #include "test/runner.h"
 
 int main() {
@@ -9,9 +10,15 @@ int main() {
     /////////////////////////////
 
 //    AbstractHeap<int>* heap = new SkewHeap<int>(getVector(20000));
-    Runner<int> run = Runner<int>();
+//    Runner<int> run = Runner<int>();
+    Runner<vector<int>> run = Runner<vector<int>>();
     run.runTest();
 //    run.dummyTest();
+
+//    for(vector<int> arr : getVector<vector<int>>(5)) {
+//        cout << arr << endl;
+//    }
+
 
 
 //    AbstractHeap<int>* heap1 = new LeftistHeap<int>(getVector(5));

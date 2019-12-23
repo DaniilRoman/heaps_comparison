@@ -17,7 +17,13 @@ public:
         this->d = d;
         this->heap = heap;
         n = heap.size();
+        heap.reserve(n+1);
         makeHeap();
+    }
+
+    ~BHeap() = default;
+
+    void destruct() override {
     }
 
     void insert(T v) override {

@@ -14,5 +14,6 @@ public:
     virtual T deleteMin() = 0;
     virtual void remove(T value) = 0;
     virtual void merge(AbstractHeap<T>* heap) = 0;
+    virtual void destruct() = 0;
 };
 

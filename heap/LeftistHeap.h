@@ -18,6 +18,17 @@ public:
         this->key = key;
         dist = 0;
     }
+
+    void destruct() {
+        if(right) { right->destruct(); }
+        if(left) { left->destruct(); }
+        delete left;
+        delete right;
+        left = nullptr;
+        right = nullptr;
+    }
+
+    ~LeftistNode() = default;
 };
 
 template <typename T>
@@ -43,6 +54,11 @@ public:
 
     LeftistHeap() = default;
     ~LeftistHeap() = default;
+
+    void destruct() override {
+        root->destruct();
+        delete root;
+    }
 
     void merge(AbstractHeap<T>* newHeap) override {
         merge(dynamic_cast<LeftistHeap&>(*newHeap));
