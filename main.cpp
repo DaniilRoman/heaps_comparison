@@ -27,10 +27,10 @@ int main() {
 
 
 //    std::vector<int> v1 = {1, 2};
-//    std::vector<int> v2 = {2, 3};
+//    std::vector<int> v2 = {1, 2};
 //    std::string s1 = "qqq";
 //    std::string s2 = "a";
-//    std::cout << (v1 > v2) << std::endl;
+//    std::cout << (v2 == v1) << std::endl;
 
 
     /////////////////////////////

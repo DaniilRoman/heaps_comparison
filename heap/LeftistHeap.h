@@ -35,7 +35,7 @@ template <typename T>
 class LeftistHeap : public AbstractHeap<T> {
 
 public:
-    LeftistHeap(int key) {
+    LeftistHeap(T key) {
         this->root = new LeftistNode<T>(key);
     }
 
@@ -94,7 +94,7 @@ public:
         return node1;
     }
 
-    void insert(int k) override {
+    void insert(T k) override {
         merge(LeftistHeap(k));
     }
 

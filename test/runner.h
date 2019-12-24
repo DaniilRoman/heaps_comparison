@@ -17,7 +17,7 @@
 
 using namespace std;
 
-static int n = 1000000;
+static int n = 10000;
 template<typename T>
 static auto getBHeap = [](int param) { return new BHeap<T>(param, getVector<T>(n)); };
 template<typename T>
@@ -27,9 +27,11 @@ auto LeftistHeap_ = [](int param) { return new LeftistHeap<T>(getVector<T>(param
 template<typename T>
 auto SkewHeap_ = [](int param) { return new SkewHeap<T>(getVector<T>(param)); };
 template<typename T>
-auto DHeap_ = [](int param) { return new BHeap<T>(55, getVector<T>(param)); };
+auto DHeap_ = [](int param) { return new BHeap<T>(5, getVector<T>(param)); };
 template<typename T>
-auto insert = [](AbstractHeap<T>* heap, AbstractHeap<T>* heap2) { heap->insert(getOperationValue<T>()); };
+auto insert = [](AbstractHeap<T>* heap, AbstractHeap<T>* heap2) {
+    heap->insert(getInsertOperationValue<T>());
+};
 template<typename T>
 auto removeFunc = [](AbstractHeap<T>* heap, AbstractHeap<T>* heap2) { heap->remove(getOperationValue<T>()); };
 template<typename T>
@@ -44,7 +46,7 @@ class Runner {
 public:
     vector<int> dParam = { 2, 3, 5, 7, 10, 20, 33, 55, 100, 200, 300};//, 1001, 5000, 10000 };
 //    vector<int> heapSizeParam = { 100, 1000, 10000, 50000, 100000, 500000, 1000000, 2000000, 5000000 };// , 10000000
-    vector<int> heapSizeParam = { 100, 1000, 10000, 50000};// , 10000000
+    vector<int> heapSizeParam = { 1000, 10000, 50000};// , 10000000
     int repeatNumber = 10;
 //    vector<int> heapSizeParam = { 1000000, 500000, 100000, 50000, 10000, 1000, 100 };
 
@@ -53,7 +55,7 @@ public:
 //        testDInBHeapRemove();
 //        testDInBHeapDeleteMin();
 
-//        testInsertBHeap();
+        testInsertBHeap();
 //        testRemoveBHeap();
 //        testDeleteMinBHeap();
 
@@ -62,7 +64,7 @@ public:
 //        testDeleteMinBinomialHeap();
 //        testMergeBinomialHeap();
 
-        testInsertSkewHeap();
+//        testInsertSkewHeap();
 //        testRemoveSkewHeap();
 //        testDeleteMinSkewHeap();
 //        testMergeSkewHeap();
@@ -211,8 +213,8 @@ private :
 
     void saveResultsToCSVWithHeader(string name, vector<int> header, vector<float> values) {
         remove(string(getFilePath(name)).c_str());
-        saveResultsToCSV(name, header);
-        saveResultsToCSV(name, values);
+        saveResultsToCSV(name+type<T>(), header);
+        saveResultsToCSV(name+type<T>(), values);
     }
 
     template<class R>

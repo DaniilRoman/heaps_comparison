@@ -321,7 +321,7 @@ private:
 
 
     pair<BinomNode<T> *, BinomNode<T> *> findMinAndPrev() {
-        int min = root->key;
+        T min = root->key;
         BinomNode<T> *minroot = root;
         BinomNode<T> *prevMinroot = nullptr;
 

@@ -8,17 +8,15 @@ template<typename T>
 class BHeap : public AbstractHeap<T>  {
 public:
 
-    int n;
     std::vector<T> heap = {};
 
     int d;
 
     BHeap(int d, std::vector<T> heap) {
         this->d = d;
-        this->heap = heap;
-        n = heap.size();
-        heap.reserve(n+1);
-        makeHeap();
+//        this->heap = heap;
+        heap.reserve(heap.size()+1);
+        makeHeap(heap);
     }
 
     ~BHeap() = default;
@@ -27,32 +25,36 @@ public:
     }
 
     void insert(T v) override {
-        n++;
-        heap[n-1] = v;
-        emersion(n-1);
+        heap.push_back(v);
+        emersion(last());
     }
 
-    void remove(T i) override {
-        decreaseToMin(i);
-        deleteMin();
+    void remove(T value) override {
+        for (int i=0; i<last(); i++) {
+            if(value==heap[i]) {
+                decreaseToMin(i);
+                deleteMin();
+                return;
+            }
+        }
+        cout << "NOT DELETED" << endl;
     }
 
     T deleteMin() override {
         T min = heap[0];
-        swap(0, n-1);
-        n--;
+        swap(0, last());
         heap.pop_back();
         diving(0);
         return min;
     }
 
     void merge(AbstractHeap<T>* heap) override {
-        cout << "Not available on BHEap" << endl;
+        cout << "Not available on DHeap" << endl;
     }
 
     void print() {
         std::cout << "\n";
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < last(); i++)
             std::cout << heap[i] << " ";
     }
 
@@ -60,7 +62,7 @@ private:
     int leftChild(int i) {
         int j = i * d + 1;
 
-        if (j >= n) {
+        if (j >= last()) {
             return -1;
         } else {
             return j;
@@ -73,7 +75,7 @@ private:
         if (j == -1) {
             return -1;
         } else {
-            return std::min(j + d - 1, n - 1);
+            return std::min(j + d - 1, last());
         }
     }
 
@@ -83,7 +85,7 @@ private:
             return -1;
         }
         int rc = rightChild(i);
-        int minIndex = n+1;
+        int minIndex = lc;
         T minValue = getMaxValue<T>();
 
         for (int idx=lc; idx<=rc; idx++) {
@@ -105,7 +107,7 @@ private:
     }
 
     void swap(int i1, int i2) {
-        int tmp = heap[i1];
+        T tmp = heap[i1];
         heap[i1] = heap[i2];
         heap[i2] = tmp;
     }
@@ -113,7 +115,7 @@ private:
     void diving(int i) {
         int j1 = i;
         int j2 = minChild(i);
-        while ( (j2 != -1) & (heap[j1]>heap[j2]) ) {
+        while ( (j2 != -1) && (heap[j1]>heap[j2]) ) {
             swap(j1, j2);
             j1 = j2;
             j2 = minChild(j1);
@@ -123,7 +125,7 @@ private:
     void emersion(int i) {
         int j1 = i;
         int j2 = parent(i);
-        while ( (j2 != -1) & (heap[j1]<heap[j2]) ) {
+        while ( (j2 != -1) && (heap[j1]<heap[j2]) ) {
             swap(j1, j2);
             j1 = j2;
             j2 = parent(j1);
@@ -135,10 +137,14 @@ private:
         emersion(i);
     }
 
-    void makeHeap() {
-        for (int i=n-1; i>=0; i--) {
-            diving(i);
+    void makeHeap(std::vector<T> heap) {
+        for (int i=heap.size()-1; i>=0; i--) {
+            insert(heap[i]);
         }
+    }
+
+    int last() {
+        return heap.size()-1;
     }
 
 };
