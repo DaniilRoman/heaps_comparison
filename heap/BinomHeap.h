@@ -35,23 +35,18 @@ public:
     ~BinomNode() = default;
 
     void destruct() {
+        parent = nullptr;
         if(rightSibling) { rightSibling->destruct(); }
         if(leftChild) {
             leftChild->destruct();
             delete leftChild;
-//            delete rightChild;
+    //            delete rightChild;
         } else if (rightChild) {
             rightChild->destruct();
             delete rightChild;
-//            delete leftChild;
+            delete leftChild;
         }
-      if(rightSibling) { delete rightSibling; }
-//        delete parent;
-
-        rightSibling = nullptr;
-        parent = nullptr;
-        rightChild = nullptr;
-        leftChild = nullptr;
+        delete rightSibling;
     }
 
     BinomNode *getTree() {
@@ -153,8 +148,7 @@ public:
             return;
         }
 
-        BinomHeap resultHeap = BinomHeap();
-        BinomNode<T> *currentRoot = resultHeap.root;
+        BinomNode<T> *currentRoot = nullptr;
 
         BinomNode<T> *root1 = this->root;
         BinomNode<T> *root2 = newHeap.root;
@@ -189,8 +183,7 @@ public:
             }
             if (root1) {
                 if (equalDegree(root1, currentRoot)) {
-                    BinomNode<T> *tree1 = root1->getTree();
-                    currentRoot = merge(tree1, currentRoot);
+                    currentRoot = merge(root1->getTree(), currentRoot);
                     root1 = root1->rightSibling;
                 } else {
                     currentRoot = link(root1, currentRoot);
@@ -199,8 +192,7 @@ public:
             }
             if (root2) {
                 if (equalDegree(root2, currentRoot)) {
-                    BinomNode<T> *tree2 = root2->getTree();
-                    currentRoot = merge(tree2, currentRoot);
+                    currentRoot = merge(root2->getTree(), currentRoot);
                     root2 = root2->rightSibling;
                 } else {
                     currentRoot = link(root2, currentRoot);
@@ -281,23 +273,6 @@ private:
     }
 
     BinomNode<T> *findNodeByKey(BinomNode<T> *node, T key) {
-//        if (node == nullptr) {
-//            return nullptr;
-//        }
-//
-//        if (node->key == key) {
-//            return node;
-//        }
-//
-//        if (node->rightSibling) {
-//            findNodeByKey(node->rightSibling, key);
-//        }
-//        if (node->leftChild) {
-//            findNodeByKey(node->leftChild, key);
-//        } else if (node->leftChild) {
-//            findNodeByKey(node->rightChild, key);
-//        }
-
         if(node != nullptr){
             if(node->key == key){
                 return node;

@@ -5,21 +5,21 @@
 #include <vector>
 
 template<typename T>
-class BHeap : public AbstractHeap<T>  {
+class DHeap : public AbstractHeap<T>  {
 public:
 
     std::vector<T> heap = {};
 
     int d;
 
-    BHeap(int d, std::vector<T> heap) {
+    DHeap(int d, std::vector<T> heap) {
         this->d = d;
 //        this->heap = heap;
         heap.reserve(heap.size()+1);
         makeHeap(heap);
     }
 
-    ~BHeap() = default;
+    ~DHeap() = default;
 
     void destruct() override {
     }

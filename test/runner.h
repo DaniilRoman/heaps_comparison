@@ -8,7 +8,7 @@
 #include <fstream>
 #include "../heap/LeftistHeap.h"
 #include "utils.h"
-#include "../heap/BHeap.h"
+#include "../heap/DHeap.h"
 #include "../heap/AbstractHeap.h"
 #include "../heap/BinomHeap.h"
 #include "../heap/SkewHeap.h"
@@ -17,9 +17,9 @@
 
 using namespace std;
 
-static int n = 10000;
+static int n = 1000000;
 template<typename T>
-static auto getBHeap = [](int param) { return new BHeap<T>(param, getVector<T>(n)); };
+static auto getBHeap = [](int param) { return new DHeap<T>(param, getVector<T>(n)); };
 template<typename T>
 auto BinomialHeap_ = [](int param) { return new BinomHeap<T>(getVector<T>(param)); };
 template<typename T>
@@ -27,7 +27,7 @@ auto LeftistHeap_ = [](int param) { return new LeftistHeap<T>(getVector<T>(param
 template<typename T>
 auto SkewHeap_ = [](int param) { return new SkewHeap<T>(getVector<T>(param)); };
 template<typename T>
-auto DHeap_ = [](int param) { return new BHeap<T>(5, getVector<T>(param)); };
+auto DHeap_ = [](int param) { return new DHeap<T>(33, getVector<T>(param)); };
 template<typename T>
 auto insert = [](AbstractHeap<T>* heap, AbstractHeap<T>* heap2) {
     heap->insert(getInsertOperationValue<T>());
@@ -44,34 +44,32 @@ template<typename T>
 class Runner {
 
 public:
-    vector<int> dParam = { 2, 3, 5, 7, 10, 20, 33, 55, 100, 200, 300};//, 1001, 5000, 10000 };
-//    vector<int> heapSizeParam = { 100, 1000, 10000, 50000, 100000, 500000, 1000000, 2000000, 5000000 };// , 10000000
-    vector<int> heapSizeParam = { 1000, 10000, 50000};// , 10000000
+    vector<int> dParam = {2, 3, 7, 10, 33, 55, 100, 200, 300};
+    vector<int> heapSizeParam = {1000000};//100, 1000, 10000, 50000, 100000, 500000, 1000000
     int repeatNumber = 10;
-//    vector<int> heapSizeParam = { 1000000, 500000, 100000, 50000, 10000, 1000, 100 };
 
     void runTest() {
-//        testDInBHeapInsert();
-//        testDInBHeapRemove();
-//        testDInBHeapDeleteMin();
+        testDInBHeapInsert();
+        testDInBHeapRemove();
+        testDInBHeapDeleteMin();
 
         testInsertBHeap();
-//        testRemoveBHeap();
-//        testDeleteMinBHeap();
+        testRemoveBHeap();
+        testDeleteMinBHeap();
 
-//        testInsertBinomialHeap();
-//        testRemoveBinomialHeap();
-//        testDeleteMinBinomialHeap();
-//        testMergeBinomialHeap();
+        testInsertBinomialHeap();
+        testRemoveBinomialHeap();
+        testDeleteMinBinomialHeap();
+        testMergeBinomialHeap();
 
-//        testInsertSkewHeap();
-//        testRemoveSkewHeap();
-//        testDeleteMinSkewHeap();
-//        testMergeSkewHeap();
+        testInsertSkewHeap();
+        testRemoveSkewHeap();
+        testDeleteMinSkewHeap();
+        testMergeSkewHeap();
 
-//        testInsertLeftistHeap();
-//        testDeleteMinLeftistHeap();
-//        testMergeLeftistHeap();
+        testInsertLeftistHeap();
+        testDeleteMinLeftistHeap();
+        testMergeLeftistHeap();
         cout << " " << "END-END-END" << endl;
     }
 
@@ -194,11 +192,10 @@ private :
 
                 heap->destruct();
                 delete heap;
-                heap = nullptr;
-                delete heapForMerge;
-                heapForMerge = nullptr;
+                if (heapForMerge) {
+                    delete heapForMerge;
+                }
                 results[i].push_back(duration);
-                cout << duration << endl;
             }
         }
 
@@ -213,8 +210,8 @@ private :
 
     void saveResultsToCSVWithHeader(string name, vector<int> header, vector<float> values) {
         remove(string(getFilePath(name)).c_str());
-        saveResultsToCSV(name+type<T>(), header);
-        saveResultsToCSV(name+type<T>(), values);
+        saveResultsToCSV(name, header);
+        saveResultsToCSV(name, values);
     }
 
     template<class R>
@@ -234,13 +231,13 @@ private :
     }
 
     string getFilePath(string fileName) {
-        return ".././results/" + fileName + ".csv";
+        return ".././results/" + fileName + type<T>() + ".csv";
     }
 
 public:
 
     void dummyTest() {
-//        BHeap* heap = new BHeap(3);
+//        DHeap* heap = new DHeap(3);
 //
 //    heap->print();
 //    heap->makeHeap();
@@ -251,7 +248,7 @@ public:
 //    heap->print();
 
 //        vector<int> vec = getVector(1);
-//        BHeap<int> heap = BHeap<int>(5);
+//        DHeap<int> heap = DHeap<int>(5);
     BinomHeap<int> heap = BinomHeap<int>(3);
 //        LeftistHeap<int> heap = LeftistHeap<int>(3);
 //    SkewHeap<int> heap = SkewHeap<int>(3);

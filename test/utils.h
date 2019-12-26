@@ -4,6 +4,8 @@
 
 #include <vector>
 #include <random>
+#include <unistd.h>
+#include <zconf.h>
 
 #pragma once
 
@@ -111,3 +113,23 @@ template <typename T> T getInsertOperationValue() { return NULL; }
 template <> int getInsertOperationValue<int>()   { return 2000; }
 
 template <> vector<int> getInsertOperationValue<vector<int>>()   { return vector<int> {2000, 2000, 2000}; }
+
+void processMemUsage(double& vm_usage, double& resident_set)
+{
+    vm_usage     = 0.0;
+    resident_set = 0.0;
+
+    unsigned long vsize;
+    long rss;
+    {
+        std::string ignore;
+        std::ifstream ifs("/proc/self/stat", std::ios_base::in);
+        ifs >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore
+            >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore
+            >> ignore >> ignore >> vsize >> rss;
+    }
+
+    long page_size_kb = sysconf(_SC_PAGE_SIZE) / 1024;
+    vm_usage = vsize / 1024.0;
+    resident_set = rss * page_size_kb;
+}
